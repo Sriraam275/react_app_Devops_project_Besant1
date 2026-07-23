@@ -2,16 +2,30 @@ pipeline {
     agent any
 
     stages {
-        stage ('changing the file permission') {
+        stage('Changing File Permission') {
             steps {
-                sh ' chmod +x build.sh'
+                sh 'chmod +x build.sh'
             }
         }
 
-        stage ('executing the file') {
+        stage('Executing Build Script') {
             steps {
                 sh './build.sh'
             }
+        }
+    }
+
+    post {
+        success {
+            sh '''
+            echo "$(date '+%Y-%m-%d %H:%M:%S') Deployment Successful" >> /home/ubuntu/devops_project/deployment_monitor/data/deployment.log
+            '''
+        }
+
+        failure {
+            sh '''
+            echo "$(date '+%Y-%m-%d %H:%M:%S') Deployment Failed" >> /home/ubuntu/devops_project/deployment_monitor/data/deployment.log
+            '''
         }
     }
 }
